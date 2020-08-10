@@ -1,0 +1,80 @@
+#### Input
+[General]
+input_fofn=input.fofn
+input_type=raw
+pa_DBdust_option=
+pa_fasta_filter_option=streamed-median
+target=assembly
+skip_checks=False
+LA4Falcon_preload=false
+
+#### Data Partitioning
+pa_DBsplit_option=-x500 -s50
+ovlp_DBsplit_option=-s50
+
+#### Repeat Masking
+pa_HPCTANmask_option=
+#no-op repmask param set
+pa_REPmask_code=0,300;0,300;0,300
+
+####Pre-assembly
+# adjust to your genome size
+genome_size = 4600000
+seed_coverage = 40
+length_cutoff = -1  
+pa_HPCdaligner_option=-v -B128 -M24
+pa_daligner_option= -k18 -e0.80 -l1000 -h256 -w8 -s100
+falcon_sense_option=--output-multi --min-idt 0.70 --min-cov 4 --max-n-read 200
+falcon_sense_greedy=False
+
+####Pread overlapping
+#ovlp_HPCdaligner_option=-v -B128 -M24 
+#ovlp_daligner_option= -k24 -e.92 -l1800 -h1024 -s100
+ovlp_daligner_option = -e.96 -s1000 -h60
+ovlp_HPCdaligner_option = -v -M24 -l500
+
+
+####Final Assembly
+length_cutoff_pr= -1
+overlap_filtering_setting=--max-diff 100 --max-cov 100 --min-cov 2
+fc_ovlp_to_graph_option=
+length_cutoff_pr = 1000
+
+###Miscellaneous configuration options
+target=assembly
+skip_checks=False
+LA4Falcon_preload=false
+
+[job.defaults]
+job_type=local
+pwatcher_type=blocking
+JOB_QUEUE=default
+MB=32768
+NPROC=6
+njobs=3
+submit = /bin/bash -c "${JOB_SCRIPT}" > "${JOB_STDOUT}" 2> "${JOB_STDERR}"
+
+[job.step.da]
+NPROC=4
+MB=49152
+njobs=4
+[job.step.la]
+NPROC=4
+MB=49152
+njobs=4
+[job.step.cns]
+NPROC=4
+MB=49152
+njobs=4
+[job.step.pda]
+NPROC=4
+MB=49152
+njobs=4
+[job.step.pla]
+NPROC=4
+MB=49152
+njobs=4
+[job.step.asm]
+NPROC=4
+MB=49152
+njobs=4
